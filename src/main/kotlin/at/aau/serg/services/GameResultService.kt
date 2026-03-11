@@ -27,4 +27,13 @@ class GameResultService {
      */
     fun deleteGameResult(id: Long) = gameResults.removeIf { it.id == id }
 
+    //neue Methode
+    // sortiert die Liste nachd dem Score, dann nach timeinSeconds
+    fun getLeaderboard(): List<GameResult> {
+        return gameResults.sortedWith(
+            compareByDescending<GameResult> { it.score }
+                .thenBy { it.timeInSeconds }
+        )
+    }
+
 }
