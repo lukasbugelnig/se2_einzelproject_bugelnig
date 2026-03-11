@@ -46,7 +46,7 @@ fun test_getLeaderboard_correctScoreSorting() {
     whenever(mockedService.getLeaderboard()).thenReturn(listOf(first, second, third))
 
     // ÄNDERUNG: Wir übergeben 'null' für den (jetzt optionalen) Rank-Parameter
-    val res: List<GameResult> = controller.getLeaderboard()
+    val res: List<GameResult> = controller.getLeaderboard(null)
 
     // ÄNDERUNG: Wir verifizieren den Aufruf der neuen Methode
     verify(mockedService).getLeaderboard()
@@ -85,7 +85,7 @@ fun test_getLeaderboard_correctScoreSorting() {
         // Da wir im Controller jetzt .getLeaderboard() aufrufen sollten:
         whenever(mockedService.getLeaderboard()).thenReturn(listOf(fast, medium, slow))
 
-        val res: List<GameResult> = controller.getLeaderboard()
+        val res: List<GameResult> = controller.getLeaderboard(null)
 
         assertEquals(3, res.size)
         assertEquals(fast, res[0])   // 10.0s -> Platz 1
