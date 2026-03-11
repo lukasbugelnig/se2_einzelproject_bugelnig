@@ -92,5 +92,33 @@ fun test_getLeaderboard_correctScoreSorting() {
         assertEquals(medium, res[1]) // 20.0s -> Platz 2
         assertEquals(slow, res[2])   // 30.0s -> Platz 3
     }
+//2.2.3
 
+    @Test
+    fun test_getLeaderboard_withValidRank_returnsSlice() {
+        // Wir erstellen 10 Dummy-Ergebnisse
+        val results = (1..10).map { GameResult(it.toLong(), "Player$it", 100 - it, 10.0) }
+        whenever(mockedService.getLeaderboard()).thenReturn(results)
+
+        // Wir fragen nach Rang 5 (Index 4)
+        // Erwartet: Plätze 2, 3, 4, 5, 6, 7, 8 (da +/- 3)
+        val res = controller.getLeaderboard(5)
+
+        assertEquals(7, res.size)
+        assertEquals("Player2", res.first().playerName)
+        assertEquals("Player8", res.last().playerName)
+    }
+
+    @Test
+    fun test_getLeaderboard_withInvalidRank_throwsBadRequest() {
+        val results = listOf(GameResult(1, "Player", 100, 10.0))
+        whenever(mockedService.getLeaderboard()).thenReturn(results)
+
+        // Wir fragen nach einem Rang, den es nicht gibt (z.B. 10)
+        val exception = org.junit.jupiter.api.assertThrows<org.springframework.web.server.ResponseStatusException> {
+            controller.getLeaderboard(10)
+        }
+
+        assertEquals(org.springframework.http.HttpStatus.BAD_REQUEST, exception.statusCode)
+    }
 }
